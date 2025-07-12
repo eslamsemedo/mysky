@@ -37,7 +37,6 @@ type DashboardStats = {
   seatrips: any[];
   hotels: any[];
   safaris: any[];
-  users: any[];
 };
 
 async function getDashboardStats(): Promise<DashboardStats> {
@@ -48,7 +47,7 @@ async function getDashboardStats(): Promise<DashboardStats> {
     throw new Error('No authentication token found');
   }
 
-  const [seatripsRes, hotelsRes, safarisRes, usersRes] = await Promise.all([
+  const [seatripsRes, hotelsRes, safarisRes] = await Promise.all([
     fetch('https://darkgray-termite-166434.hostingersite.com/api/seatrips', {
       headers: {
         'Authorization': `Bearer ${authToken}`
@@ -64,39 +63,30 @@ async function getDashboardStats(): Promise<DashboardStats> {
         'Authorization': `Bearer ${authToken}`
       }
     }),
-    fetch('https://darkgray-termite-166434.hostingersite.com/api/admin/users', {
-      headers: {
-        'Authorization': `Bearer ${authToken}`
-      }
-    }),
   ]);
 
-  const [seatripsData, hotelsData, safarisData, usersData] = await Promise.all([
+  const [seatripsData, hotelsData, safarisData] = await Promise.all([
     seatripsRes.json(),
     hotelsRes.json(),
     safarisRes.json(),
-    usersRes.json(),
   ]);
 
   // Log the raw responses to debug
   console.log('Seatrips response:', seatripsData);
   console.log('Hotels response:', hotelsData);
   console.log('Safaris response:', safarisData);
-  console.log('Users response:', usersData);
 
   // Handle different response formats based on the actual API responses
   const seatrips = seatripsData.seatrips || [];
   const hotels = Array.isArray(hotelsData) ? hotelsData : [];
   const safaris = safarisData.safaris || [];
-  const users = usersData.users || [];
 
-  console.log('Processed data:', { seatrips, hotels, safaris, users });
+  console.log('Processed data:', { seatrips, hotels, safaris });
 
   return {
     seatrips,
     hotels,
     safaris,
-    users,
   };
 }
 
@@ -114,7 +104,6 @@ export default async function DashboardPage() {
     { label: 'SeaTrips', value: data.seatrips.length },
     { label: 'Hotels', value: data.hotels.length },
     { label: 'Safaris', value: data.safaris.length },
-    { label: 'Users', value: data.users.length },
   ];
 
   const tabData = [
@@ -135,12 +124,6 @@ export default async function DashboardPage() {
       label: 'Safaris',
       rows: data.safaris.slice(0, 5),
       columns: extractColumns(data.safaris)
-    },
-    {
-      key: 'users',
-      label: 'Users',
-      rows: data.users.slice(0, 5),
-      columns: extractColumns(data.users)
     },
   ];
 
