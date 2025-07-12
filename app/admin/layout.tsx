@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded px-3 py-2 font-medium transition-colors ${pathname.startsWith(item.href) ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
+              className={`rounded px-3 py-2 font-medium transition-colors ${pathname?.startsWith(item.href) ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
             >
               {item.label}
             </Link>

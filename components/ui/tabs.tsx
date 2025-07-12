@@ -4,10 +4,17 @@ import { Tab } from '@headlessui/react';
 export function Tabs({ value, onValueChange, children, className }: { value: string; onValueChange: (v: string) => void; children: React.ReactNode; className?: string }) {
   return (
     <Tab.Group selectedIndex={0} onChange={(i) => {
-      const childArray = React.Children.toArray(children) as React.ReactElement[];
-      const tabTriggers = childArray.filter((c) => c.type === TabsList)[0]?.props.children;
-      if (tabTriggers && tabTriggers[i]) {
-        onValueChange(tabTriggers[i].props.value);
+      const childArray = React.Children.toArray(children);
+      const tabsListElement = childArray.find(
+        (c): c is React.ReactElement => React.isValidElement(c) && c.type === TabsList
+      );
+      const tabTriggersRaw = (tabsListElement?.props as { children?: React.ReactNode })?.children;
+      const tabTriggers: React.ReactElement[] = Array.isArray(tabTriggersRaw)
+        ? tabTriggersRaw.filter(React.isValidElement)
+        : React.isValidElement(tabTriggersRaw) ? [tabTriggersRaw] : [];
+      const trigger = tabTriggers[i];
+      if (trigger && trigger.props && typeof (trigger.props as { value?: unknown }).value === 'string') {
+        onValueChange((trigger.props as { value: string }).value);
       }
     }}>
       <div className={className}>{children}</div>
