@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '../../components/ui/button';
+import { logoutAdmin } from './logout/action';
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard' },
@@ -33,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col">
         <header className="h-16 flex items-center justify-between border-b px-6 bg-card">
           <div className="font-semibold text-lg">Admin Panel</div>
-          <form action="/api/admin/logout" method="POST">
+          <form action={logoutAdmin}>
             <Button type="submit" variant="outline">Logout</Button>
           </form>
         </header>
